@@ -1,6 +1,7 @@
 package controller;
 
 import model.bean.TinhTrangPhong;
+import model.bo.TinhTrangPhongBO;
 import model.dao.TinhTrangPhongDAO;
 
 import javax.servlet.*;
@@ -10,11 +11,11 @@ import java.util.List;
 
 public class TinhTrangPhongController extends HttpServlet {
 
-    private TinhTrangPhongDAO ttpDAO;
+    private TinhTrangPhongBO ttpBO;
 
     @Override
     public void init() throws ServletException {
-        ttpDAO = new TinhTrangPhongDAO();
+        ttpBO = new TinhTrangPhongBO();
     }
 
     @Override
@@ -34,7 +35,7 @@ public class TinhTrangPhongController extends HttpServlet {
     private void hienThiDanhSach(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<TinhTrangPhong> list = ttpDAO.getAll();
+        List<TinhTrangPhong> list = ttpBO.getAll();
         request.setAttribute("listTinhTrang", list);
 
         RequestDispatcher rd =

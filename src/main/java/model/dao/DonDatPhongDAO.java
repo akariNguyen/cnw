@@ -8,19 +8,23 @@ import model.bean.DonDatPhong;
 
 public class DonDatPhongDAO {
 
+    // ===========================
+    // LẤY TẤT CẢ ĐƠN ĐẶT PHÒNG
+    // ===========================
     public List<DonDatPhong> getAll() {
         List<DonDatPhong> list = new ArrayList<>();
 
         String sql = "SELECT ddp.*, p.ten_phong, kh.ten AS ten_khach_hang " +
-                "FROM don_dat_phong ddp " +
-                "JOIN phong p ON ddp.phong_id = p.id " +
-                "JOIN khach_hang kh ON ddp.khach_hang_id = kh.id";
+                     "FROM don_dat_phong ddp " +
+                     "JOIN phong p ON ddp.phong_id = p.id " +
+                     "JOIN khach_hang kh ON ddp.khach_hang_id = kh.id";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
+
                 DonDatPhong d = new DonDatPhong(
                         rs.getInt("id"),
                         rs.getInt("phong_id"),
@@ -43,6 +47,9 @@ public class DonDatPhongDAO {
         return list;
     }
 
+    // ===========================
+    // LẤY ĐƠN ĐẶT PHÒNG THEO ID
+    // ===========================
     public DonDatPhong getById(int id) {
 
         String sql = "SELECT * FROM don_dat_phong WHERE id = ?";
@@ -76,9 +83,13 @@ public class DonDatPhongDAO {
         return null;
     }
 
+    // ===========================
+    // THÊM ĐƠN ĐẶT PHÒNG
+    // ===========================
     public void insert(DonDatPhong d) {
 
-        String sql = "INSERT INTO don_dat_phong (phong_id, khach_hang_id, ngay_nhan, ngay_tra, thoi_gian_dat, ma_don) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO don_dat_phong (phong_id, khach_hang_id, ngay_nhan, ngay_tra, thoi_gian_dat, ma_don) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -97,13 +108,16 @@ public class DonDatPhongDAO {
         }
     }
 
+    // ===========================
+    // LẤY ĐƠN ĐẶT PHÒNG THEO KHÁCH HÀNG
+    // ===========================
     public List<DonDatPhong> getByKhachHangId(int khachHangId) {
         List<DonDatPhong> list = new ArrayList<>();
 
         String sql = "SELECT ddp.*, p.ten_phong " +
-                "FROM don_dat_phong ddp " +
-                "JOIN phong p ON ddp.phong_id = p.id " +
-                "WHERE ddp.khach_hang_id = ?";
+                     "FROM don_dat_phong ddp " +
+                     "JOIN phong p ON ddp.phong_id = p.id " +
+                     "WHERE ddp.khach_hang_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -112,6 +126,7 @@ public class DonDatPhongDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+
                 DonDatPhong d = new DonDatPhong(
                         rs.getInt("id"),
                         rs.getInt("phong_id"),
@@ -122,6 +137,7 @@ public class DonDatPhongDAO {
                         rs.getString("ma_don")
                 );
                 d.setTenPhong(rs.getString("ten_phong"));
+
                 list.add(d);
             }
 
@@ -134,6 +150,9 @@ public class DonDatPhongDAO {
         return list;
     }
 
+    // ===========================
+    // XÓA ĐƠN ĐẶT PHÒNG
+    // ===========================
     public void delete(int id) {
         String sql = "DELETE FROM don_dat_phong WHERE id=?";
 
@@ -146,5 +165,48 @@ public class DonDatPhongDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // ===========================
+    // LẤY ĐƠN ĐẶT PHÒNG THEO KHÁCH SẠN (OWNER)
+    // ===========================
+    public List<DonDatPhong> getByKhachSanId(int khachSanId) {
+        List<DonDatPhong> list = new ArrayList<>();
+
+        String sql = "SELECT ddp.*, p.ten_phong, kh.ten AS ten_khach_hang " +
+                     "FROM don_dat_phong ddp " +
+                     "JOIN phong p ON ddp.phong_id = p.id " +
+                     "JOIN khach_hang kh ON ddp.khach_hang_id = kh.id " +
+                     "WHERE p.khach_san_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, khachSanId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+
+                DonDatPhong d = new DonDatPhong(
+                        rs.getInt("id"),
+                        rs.getInt("phong_id"),
+                        rs.getInt("khach_hang_id"),
+                        rs.getDate("ngay_nhan"),
+                        rs.getDate("ngay_tra"),
+                        rs.getTimestamp("thoi_gian_dat"),
+                        rs.getString("ma_don")
+                );
+
+                d.setTenPhong(rs.getString("ten_phong"));
+                d.setTenKhachHang(rs.getString("ten_khach_hang"));
+
+                list.add(d);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 }

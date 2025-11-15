@@ -1,6 +1,7 @@
 package controller;
 
 import model.bean.Phong;
+import model.bo.PhongBO;
 import model.dao.PhongDAO;
 
 import javax.servlet.*;
@@ -10,11 +11,11 @@ import java.util.List;
 
 public class PhongController extends HttpServlet {
 
-    private PhongDAO phongDAO;
+    private PhongBO phongBO;
 
     @Override
     public void init() throws ServletException {
-        phongDAO = new PhongDAO();
+        phongBO = new PhongBO();
     }
 
     @Override
@@ -37,7 +38,7 @@ public class PhongController extends HttpServlet {
             throws ServletException, IOException {
         try {
             int khachSanId = Integer.parseInt(request.getParameter("khachSanId"));
-            List<Phong> listPhong = phongDAO.getByKhachSanId(khachSanId);
+            List<Phong> listPhong = phongBO.getByKhachSanId(khachSanId);
 
             request.setAttribute("listPhong", listPhong);
             request.setAttribute("khachSanId", khachSanId);

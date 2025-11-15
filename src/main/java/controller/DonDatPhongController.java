@@ -1,6 +1,7 @@
 package controller;
 
 import model.bean.DonDatPhong;
+import model.bo.DonDatPhongBO;
 import model.dao.DonDatPhongDAO;
 
 import javax.servlet.*;
@@ -12,11 +13,11 @@ import java.util.List;
 
 public class DonDatPhongController extends HttpServlet {
 
-    private DonDatPhongDAO ddpDAO;
+    private DonDatPhongBO ddpBO;
 
     @Override
     public void init() throws ServletException {
-        ddpDAO = new DonDatPhongDAO();
+        ddpBO = new DonDatPhongBO();
     }
 
     @Override
@@ -43,7 +44,7 @@ public class DonDatPhongController extends HttpServlet {
 
     private void hienThiDanhSach(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<DonDatPhong> list = ddpDAO.getAll();
+        List<DonDatPhong> list = ddpBO.getAll();
         request.setAttribute("listDonDat", list);
         RequestDispatcher rd = request.getRequestDispatcher("/views/dondatphong/danhsach.jsp");
         rd.forward(request, response);
@@ -54,7 +55,7 @@ public class DonDatPhongController extends HttpServlet {
         String bookingId = request.getParameter("bookingId");
         try {
             int id = Integer.parseInt(bookingId);
-            DonDatPhong booking = ddpDAO.getById(id);
+            DonDatPhong booking = ddpBO.getById(id);
             if (booking == null) {
                 request.setAttribute("error", "Không tìm thấy đơn đặt phòng.");
             } else {
@@ -74,15 +75,15 @@ public class DonDatPhongController extends HttpServlet {
         String bookingId = request.getParameter("bookingId");
         try {
             int id = Integer.parseInt(bookingId);
-            DonDatPhong booking = ddpDAO.getById(id);
+            DonDatPhong booking = ddpBO.getById(id);
             if (booking == null) {
                 request.setAttribute("error", "Không tìm thấy đơn để hủy.");
                 RequestDispatcher rd = request.getRequestDispatcher("/views/dondatphong/danhsach.jsp");
                 rd.forward(request, response);
             } else {
-                ddpDAO.delete(id);
+                ddpBO.delete(id);
                 request.setAttribute("success", "Hủy đơn thành công.");
-                List<DonDatPhong> list = ddpDAO.getAll();
+                List<DonDatPhong> list = ddpBO.getAll();
                 request.setAttribute("listDonDat", list);
                 RequestDispatcher rd = request.getRequestDispatcher("/views/dondatphong/danhsach.jsp");
                 rd.forward(request, response);
@@ -114,9 +115,9 @@ public class DonDatPhongController extends HttpServlet {
                 maDon
             );
 
-            ddpDAO.insert(don);
+            ddpBO.insert(don);
             request.setAttribute("success", "Đặt phòng thành công.");
-            List<DonDatPhong> list = ddpDAO.getAll();
+            List<DonDatPhong> list = ddpBO.getAll();
             request.setAttribute("listDonDat", list);
             RequestDispatcher rd = request.getRequestDispatcher("/views/dondatphong/danhsach.jsp");
             rd.forward(request, response);

@@ -1,6 +1,7 @@
 package controller;
 
 import model.bean.KhachSan;
+import model.bo.KhachSanBO;
 import model.dao.KhachSanDAO;
 
 import javax.servlet.*;
@@ -10,11 +11,11 @@ import java.util.List;
 
 public class KhachSanController extends HttpServlet {
 
-    private KhachSanDAO ksDAO;
+    private KhachSanBO ksBO;
 
     @Override
     public void init() throws ServletException {
-        ksDAO = new KhachSanDAO();
+        ksBO = new KhachSanBO();
     }
 
     @Override
@@ -40,7 +41,7 @@ public class KhachSanController extends HttpServlet {
 
     private void hienThiDanhSach(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<KhachSan> danhSach = ksDAO.getAll();
+        List<KhachSan> danhSach = ksBO.getAll();
         request.setAttribute("listKhachSan", danhSach);
         RequestDispatcher rd = request.getRequestDispatcher("/views/khachsan/danhsach.jsp");
         rd.forward(request, response);
@@ -50,7 +51,7 @@ public class KhachSanController extends HttpServlet {
             throws ServletException, IOException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
-            KhachSan ks = ksDAO.getById(id);
+            KhachSan ks = ksBO.getById(id);
 
             if (ks == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy khách sạn");
