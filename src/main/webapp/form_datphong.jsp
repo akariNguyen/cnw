@@ -3,6 +3,28 @@
 <%
     KhachHang khachHang = (KhachHang) session.getAttribute("khachHang");
     String phongId = request.getParameter("phongId"); // truyền từ link trước đó
+
+    // Lấy dữ liệu giữ lại khi có lỗi
+    String error = (String) request.getAttribute("error");
+    String success = (String) request.getAttribute("success");
+
+    String phongIdVal = request.getParameter("phong_id");
+    if (phongIdVal == null) phongIdVal = (String) request.getAttribute("phongId");
+    if (phongIdVal == null) phongIdVal = phongId; // fallback từ URL
+
+    String ngayNhanVal = request.getParameter("ngay_nhan");
+    if (ngayNhanVal == null) ngayNhanVal = (String) request.getAttribute("ngayNhan");
+
+    String ngayTraVal = request.getParameter("ngay_tra");
+    if (ngayTraVal == null) ngayTraVal = (String) request.getAttribute("ngayTra");
+
+    String maDonVal = request.getParameter("ma_don");
+    if (maDonVal == null || maDonVal.isEmpty()) {
+        maDonVal = "MD" + System.currentTimeMillis();
+    }
+    if (request.getAttribute("maDon") != null) {
+        maDonVal = (String) request.getAttribute("maDon");
+    }
 %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -144,21 +166,39 @@
                 <i class="fas fa-exclamation-circle me-2"></i>
                 <div>Bạn cần <a href="dangnhap.jsp" class="alert-link">đăng nhập</a> để đặt phòng.</div>
             </div>
-        <% } else if (phongId == null) { %>
+        <% } else if (phongIdVal == null) { %>
             <div class="alert alert-danger d-flex align-items-center" role="alert">
                 <i class="fas fa-exclamation-circle me-2"></i>
                 <div>Thiếu thông tin phòng.</div>
             </div>
         <% } else { %>
+
+            <!-- HIỂN THỊ LỖI -->
+            <% if (error != null) { %>
+                <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <div><%= error %></div>
+                </div>
+            <% } %>
+
+            <!-- HIỂN THỊ THÀNH CÔNG (nếu có) -->
+            <% if (success != null) { %>
+                <div class="alert alert-success d-flex align-items-center mb-3" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <div><%= success %></div>
+                </div>
+            <% } %>
+
             <form id="bookingForm" action="dondatphong" method="post">
-                <input type="hidden" name="phong_id" value="<%= phongId %>">
+                <input type="hidden" name="phong_id" value="<%= phongIdVal %>">
                 <input type="hidden" name="khach_hang_id" value="<%= khachHang.getId() %>">
 
                 <div class="mb-3">
                     <label for="ngay_nhan" class="form-label">Ngày nhận phòng</label>
                     <div class="input-group">
                         <i class="fas fa-calendar-alt"></i>
-                        <input type="date" class="form-control" id="ngay_nhan" name="ngay_nhan" required>
+                        <input type="date" class="form-control" id="ngay_nhan" name="ngay_nhan" 
+                               value="<%= ngayNhanVal != null ? ngayNhanVal : "" %>" required>
                     </div>
                     <div class="error-message" id="ngayNhanError"></div>
                 </div>
@@ -167,7 +207,8 @@
                     <label for="ngay_tra" class="form-label">Ngày trả phòng</label>
                     <div class="input-group">
                         <i class="fas fa-calendar-alt"></i>
-                        <input type="date" class="form-control" id="ngay_tra" name="ngay_tra" required>
+                        <input type="date" class="form-control" id="ngay_tra" name="ngay_tra" 
+                               value="<%= ngayTraVal != null ? ngayTraVal : "" %>" required>
                     </div>
                     <div class="error-message" id="ngayTraError"></div>
                 </div>
@@ -176,12 +217,15 @@
                     <label for="ma_don" class="form-label">Mã đơn (hệ thống tự sinh nếu để trống)</label>
                     <div class="input-group">
                         <i class="fas fa-barcode"></i>
-                        <input type="text" class="form-control" id="ma_don" name="ma_don" value="<%= "MD" + System.currentTimeMillis() %>">
+                        <input type="text" class="form-control" id="ma_don" name="ma_don" 
+                               value="<%= maDonVal %>">
                     </div>
                     <div class="error-message" id="maDonError"></div>
                 </div>
 
-                <button type="submit" class="btn btn-success"><i class="fas fa-check me-2"></i> Xác nhận đặt phòng</button>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check me-2"></i> Xác nhận đặt phòng
+                </button>
             </form>
         <% } %>
 

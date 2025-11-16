@@ -71,7 +71,7 @@ public class PhongDAO {
             stmt.setString(3, p.getLoai());
             stmt.setInt(4, p.getGia());
             stmt.setInt(5, p.getSucChua());
-            stmt.setInt(6, p.getSoLuong());
+
             stmt.setString(7, p.getMoTa());
             stmt.setString(8, p.getHinhAnh());
             stmt.executeUpdate();
@@ -92,7 +92,7 @@ public class PhongDAO {
             stmt.setString(3, p.getLoai());
             stmt.setInt(4, p.getGia());
             stmt.setInt(5, p.getSucChua());
-            stmt.setInt(6, p.getSoLuong());
+       
             stmt.setString(7, p.getMoTa());
             stmt.setString(8, p.getHinhAnh());
             stmt.setInt(9, p.getId());
@@ -123,7 +123,7 @@ public class PhongDAO {
                 rs.getString("loai"),
                 rs.getInt("gia"),
                 rs.getInt("suc_chua"),
-                rs.getInt("so_luong"),
+    
                 rs.getString("mo_ta"),
                 rs.getString("hinh_anh")
         );

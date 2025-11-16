@@ -31,25 +31,20 @@ public class KhachHangController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         String action = request.getParameter("action");
 
-        //---------------------------------------------------
-        // 1) REGISTER
-        //---------------------------------------------------
+        // 1. ĐĂNG KÝ
         if ("register".equals(action)) {
-
-            String role = request.getParameter("role"); // khách hàng / owner
-
+            String role = request.getParameter("role");
             String ten = request.getParameter("ten");
             String sdt = request.getParameter("sdt");
             String email = request.getParameter("email");
             String matKhau = request.getParameter("matkhau");
 
-            //---------------------------------------------------
-            // CASE 1: ĐĂNG KÝ KHÁCH HÀNG
-            //---------------------------------------------------
-            if (role.equals("khachhang")) {
-
+            if ("khachhang".equals(role)) {
                 KhachHang kh = new KhachHang();
                 kh.setTen(ten);
                 kh.setSdt(sdt);
@@ -63,18 +58,10 @@ public class KhachHangController extends HttpServlet {
                     e.printStackTrace();
                     response.sendRedirect("dangky.jsp?error=1");
                 }
-
                 return;
             }
 
-            //---------------------------------------------------
-            // CASE 2: ĐĂNG KÝ CHỦ KHÁCH SẠN
-            //---------------------------------------------------
-            if (role.equals("owner")) {
-
-                // ---------------------------
-                // 1) Lưu chủ khách sạn
-                // ---------------------------
+            if ("owner".equals(role)) {
                 ChuKhachSan cks = new ChuKhachSan();
                 cks.setTen(ten);
                 cks.setSdt(sdt);
@@ -87,9 +74,6 @@ public class KhachHangController extends HttpServlet {
                     return;
                 }
 
-                // ---------------------------
-                // 2) Lưu khách sạn
-                // ---------------------------
                 KhachSan ks = new KhachSan();
                 ks.setTen(request.getParameter("ks_ten"));
                 ks.setDiaChi(request.getParameter("ks_diachi"));
@@ -99,33 +83,28 @@ public class KhachHangController extends HttpServlet {
 
                 ksBO.insert(ks);
 
-                // ---------------------------
-                // 3) Tạo session cho OWNER
-                // ---------------------------
                 HttpSession session = request.getSession();
                 session.setAttribute("ownerId", ownerId);
                 session.setAttribute("role", "owner");
-
-                // ---------------------------
-                // 4) Redirect về dashboard
-                // ---------------------------
                 response.sendRedirect("views/owner/dashboard.jsp");
                 return;
             }
 
+            response.sendRedirect("dangky.jsp?error=1");
+            return;
         }
 
-        //---------------------------------------------------
-        // 2) LOGIN
-        //---------------------------------------------------
-        else {
-
+        // 2. ĐĂNG NHẬP
+        else if ("login".equals(action)) {
             String taiKhoan = request.getParameter("taikhoan");
             String matKhau = request.getParameter("matkhau");
 
-            // LOGIN khách hàng
-            KhachHang kh = khBO.login(taiKhoan, matKhau);
+            if (taiKhoan == null || matKhau == null || taiKhoan.trim().isEmpty()) {
+                response.sendRedirect("dangnhap.jsp?error=1");
+                return;
+            }
 
+            KhachHang kh = khBO.login(taiKhoan.trim(), matKhau);
             if (kh != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("khachHang", kh);
@@ -134,8 +113,7 @@ public class KhachHangController extends HttpServlet {
                 return;
             }
 
-            // LOGIN chủ khách sạn
-            ChuKhachSan owner = ownerBO.login(taiKhoan, matKhau);
+            ChuKhachSan owner = ownerBO.login(taiKhoan.trim(), matKhau);
             if (owner != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("owner", owner);
@@ -145,15 +123,36 @@ public class KhachHangController extends HttpServlet {
             }
 
             response.sendRedirect("dangnhap.jsp?error=1");
+            return;
+        }
+
+        // 3. CẬP NHẬT HỒ SƠ
+        else if ("updateProfile".equals(action)) {
+            capNhatProfile(request, response);
+            return;
+        }
+
+        // 4. ĐỔI MẬT KHẨU
+        else if ("changePassword".equals(action)) {
+            doiMatKhauKhachHang(request, response);
+            return;
+        }
+
+        // Không có action
+        else {
+            response.sendRedirect("index.jsp");
         }
     }
 
     //---------------------------------------------------
-    // LOGOUT
+    // LOGOUT + EDIT PROFILE + DETAIL KHÁCH HÀNG
     //---------------------------------------------------
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
         String action = request.getParameter("action");
 
@@ -161,8 +160,127 @@ public class KhachHangController extends HttpServlet {
             HttpSession session = request.getSession(false);
             if (session != null) session.invalidate();
             response.sendRedirect("index.jsp");
+        } else if ("editProfile".equals(action)) {
+            hienThiFormEditProfile(request, response);
+        } else if ("detail".equals(action)) {
+            xemChiTietKhachHang(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
+    }
+
+    // XEM CHI TIẾT KHÁCH HÀNG (cho modal hoặc full page)
+    private void xemChiTietKhachHang(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String idStr = request.getParameter("id");
+        if (idStr == null || idStr.trim().isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID không hợp lệ");
+            return;
+        }
+
+        int id;
+        try {
+            id = Integer.parseInt(idStr.trim());
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID không hợp lệ");
+            return;
+        }
+
+        KhachHang kh = khBO.getById(id);
+        if (kh == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy khách hàng");
+            return;
+        }
+
+        request.setAttribute("khachHang", kh);
+        // Forward đến partial JSP cho modal (không full HTML)
+        request.getRequestDispatcher("/views/khachhang/chitiet_partial.jsp").forward(request, response);
+    }
+
+    // FORM CHỈNH SỬA HỒ SƠ
+    private void hienThiFormEditProfile(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        KhachHang kh = (KhachHang) request.getSession().getAttribute("khachHang");
+        if (kh == null) {
+            response.sendRedirect("dangnhap.jsp");
+            return;
+        }
+        request.setAttribute("khachHang", kh);
+        request.getRequestDispatcher("/views/khachhang/edit_profile.jsp").forward(request, response);
+    }
+
+    // UPDATE PROFILE
+    private void capNhatProfile(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        KhachHang kh = (KhachHang) request.getSession().getAttribute("khachHang");
+        if (kh == null) {
+            response.sendRedirect("dangnhap.jsp");
+            return;
+        }
+
+        int id = Integer.parseInt(request.getParameter("id"));
+        if (id != kh.getId()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Không có quyền cập nhật");
+            return;
+        }
+
+        kh.setTen(request.getParameter("ten"));
+        kh.setSdt(request.getParameter("sdt"));
+        kh.setEmail(request.getParameter("email"));
+
+        khBO.update(kh);
+
+        request.getSession().setAttribute("khachHang", kh);
+        request.getSession().setAttribute("success", "Cập nhật hồ sơ thành công!");
+        response.sendRedirect("khachhang?action=editProfile");
+    }
+
+    // CHANGE PASSWORD
+    private void doiMatKhauKhachHang(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        KhachHang kh = (KhachHang) request.getSession().getAttribute("khachHang");
+        if (kh == null) {
+            response.sendRedirect("dangnhap.jsp");
+            return;
+        }
+
+        int id = Integer.parseInt(request.getParameter("id"));
+        if (id != kh.getId()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Không có quyền thay đổi");
+            return;
+        }
+
+        String matKhauCu = request.getParameter("matKhauCu");
+        String matKhauMoi = request.getParameter("matKhauMoi");
+        String matKhauXacNhan = request.getParameter("matKhauXacNhan");
+
+        // Kiểm tra mật khẩu cũ
+        if (!matKhauCu.equals(kh.getMatKhau())) {
+            request.setAttribute("error", "Mật khẩu cũ không đúng!");
+            hienThiFormEditProfile(request, response);
+            return;
+        }
+
+        // Kiểm tra xác nhận
+        if (!matKhauMoi.equals(matKhauXacNhan)) {
+            request.setAttribute("error", "Mật khẩu mới không khớp!");
+            hienThiFormEditProfile(request, response);
+            return;
+        }
+
+        if (matKhauMoi.length() < 6) {
+            request.setAttribute("error", "Mật khẩu mới phải ít nhất 6 ký tự!");
+            hienThiFormEditProfile(request, response);
+            return;
+        }
+
+        // Cập nhật mật khẩu mới
+        kh.setMatKhau(matKhauMoi);
+        khBO.update(kh);
+
+        request.getSession().setAttribute("khachHang", kh);
+        request.getSession().setAttribute("success", "Đổi mật khẩu thành công!");
+        response.sendRedirect("khachhang?action=editProfile");
     }
 }

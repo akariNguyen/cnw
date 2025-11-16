@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="model.bean.*, model.dao.*,model.bo.*" %>
 
 <%
@@ -10,6 +10,11 @@
 
     KhachSanDAO ksDAO = new KhachSanDAO();
     KhachSan ks = ksDAO.getByOwnerId(owner.getId()); // <-- hàm mới
+
+    String success = (String) session.getAttribute("success");
+    if (success != null) {
+        session.removeAttribute("success"); // Xóa sau khi hiển thị
+    }
 %>
 
 <!DOCTYPE html>
@@ -22,7 +27,18 @@
 
 <div class="container mt-4">
 
-    <h3>Xin chào, <%= owner.getTen() %> 👋</h3>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Xin chào, <%= owner.getTen() %> 👋</h3>
+        <a href="${pageContext.request.contextPath}/khachhang?action=logout" class="btn btn-outline-danger">Đăng xuất</a>
+    </div>
+
+    <!-- Hiển thị thông báo thành công -->
+    <% if (success != null) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
 
     <div class="card mt-4 shadow-sm">
         <div class="card-body">
@@ -37,9 +53,11 @@
                 <p><strong>Mô tả:</strong> <%= ks.getMoTa() %></p>
             <% } %>
 
-            <a href="edit_hotel.jsp" class="btn btn-warning mt-3">Chỉnh sửa khách sạn</a>
-            <a href="room_list.jsp" class="btn btn-primary mt-3">Quản lý phòng</a>
-            <a href="booking_list.jsp" class="btn btn-success mt-3">Xem đơn đặt phòng</a>
+            <div class="mt-3">
+                <a href="${pageContext.request.contextPath}/owner/hotel?action=edit" class="btn btn-warning me-2">Chỉnh sửa khách sạn</a>
+                <a href="${pageContext.request.contextPath}/phong?action=ownerList" class="btn btn-primary me-2">Quản lý phòng</a>
+                <a href="${pageContext.request.contextPath}/views/owner/booking_list.jsp" class="btn btn-success">Xem đơn đặt phòng</a>
+            </div>
         </div>
     </div>
 

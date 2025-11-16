@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page session="true" %>
 <%@ page import="model.bean.KhachHang" %>
 <%
@@ -23,7 +23,6 @@
             color: #333;
             overflow-x: hidden;
         }
-
         /* Header */
         .header {
             background: linear-gradient(135deg, #1e3a8a, #3b82f6);
@@ -55,14 +54,12 @@
             z-index: 1;
             animation: fadeInDown 1s ease-out;
         }
-
         /* Welcome Message */
         .welcome-message {
             max-width: 600px;
             margin: 1rem auto;
             animation: fadeIn 1s ease-out;
         }
-
         /* Feature Cards */
         .features-container {
             max-width: 1200px;
@@ -105,7 +102,6 @@
             color: #1e3a8a;
             text-decoration: underline;
         }
-
         /* Footer */
         .footer {
             background: #1e3a8a;
@@ -122,7 +118,6 @@
         .footer a:hover {
             color: white;
         }
-
         /* Animations */
         @keyframes fadeInDown {
             from {
@@ -152,7 +147,6 @@
                 opacity: 1;
             }
         }
-
         /* Responsive */
         @media (max-width: 768px) {
             .header h1 {
@@ -172,7 +166,6 @@
     <div class="header">
         <h1><i class="fas fa-hotel me-2"></i> Hệ Thống Đặt Phòng Khách Sạn</h1>
     </div>
-
     <!-- Welcome Message -->
     <div class="container welcome-message">
         <%
@@ -180,7 +173,8 @@
         %>
             <div class="alert alert-success d-flex align-items-center" role="alert">
                 <i class="fas fa-user-check me-2"></i>
-                <div>Xin chào, <b><%= khachHang.getTen() %></b> | 
+                <div>Xin chào, <b><%= khachHang.getTen() %></b> |
+                    <a href="khachhang?action=editProfile" class="alert-link">Chỉnh sửa hồ sơ</a> |
                     <a href="khachhang?action=logout" class="alert-link">Đăng xuất</a>
                 </div>
             </div>
@@ -190,7 +184,7 @@
             <div class="alert alert-info d-flex align-items-center" role="alert">
                 <i class="fas fa-info-circle me-2"></i>
                 <div>
-                    Vui lòng <a href="dangnhap.jsp" class="alert-link">Đăng nhập</a> hoặc 
+                    Vui lòng <a href="dangnhap.jsp" class="alert-link">Đăng nhập</a> hoặc
                     <a href="dangky.jsp" class="alert-link">Đăng ký</a> để sử dụng đầy đủ tính năng.
                 </div>
             </div>
@@ -198,7 +192,6 @@
             }
         %>
     </div>
-
     <!-- Features Section -->
     <div class="container features-container">
         <h3 class="text-center mb-4">Chức Năng Chính</h3>
@@ -229,7 +222,6 @@
             </div>
         </div>
     </div>
-
     <!-- Footer -->
     <div class="footer">
         <p>© 2025 - Hệ thống đặt phòng khách sạn bằng JSP/Servlet</p>
@@ -239,8 +231,4 @@
             <a href="#"><i class="fab fa-instagram"></i></a>
         </p>
     </div>
-
-    <!-- Bootstrap 5 JS and Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
-</html>
+   

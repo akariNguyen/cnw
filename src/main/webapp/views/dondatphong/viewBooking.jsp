@@ -1,10 +1,11 @@
-
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="model.bean.DonDatPhong" %>
-<%@ page import="model.bean.KhachHang" %>
+<%@ page import="model.bean.Phong" %>
+<%@ page import="model.bean.KhachSan" %>
 <%
     DonDatPhong booking = (DonDatPhong) request.getAttribute("booking");
-    KhachHang khachHang = (KhachHang) session.getAttribute("khachHang");
+    Phong phong = (Phong) request.getAttribute("phong");
+    KhachSan khachSan = (KhachSan) request.getAttribute("khachSan");
     String error = (String) request.getAttribute("error");
 %>
 <!DOCTYPE html>
@@ -13,144 +14,146 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi tiết đơn đặt phòng</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous">
-    <!-- Google Fonts: Inter -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #f4f7fc;
-            font-family: 'Inter', sans-serif;
-            color: #333;
-        }
-
-        /* Header */
+        body { background-color: #f4f7fc; font-family: 'Inter', sans-serif; color: #333; }
         .header {
             background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            color: white;
-            padding: 3rem 0;
-            text-align: center;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
+            color: white; padding: 3rem 0; text-align: center;
+            border-radius: 0 0 20px 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
-        .header img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 15px;
-            margin-bottom: 1.5rem;
-            opacity: 0.9;
-            transition: transform 0.3s ease;
-        }
-        .header img:hover {
-            transform: scale(1.02);
-        }
-        .header h2 {
-            font-weight: 700;
-            font-size: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .header img { max-width: 100%; height: auto; border-radius: 15px; margin-bottom: 1.5rem; opacity: 0.9; }
+        .header img:hover { transform: scale(1.02); }
+        .header h2 { font-weight: 700; font-size: 2rem; text-transform: uppercase; }
 
-        /* Detail Container */
         .detail-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-            margin: 2rem auto;
-            max-width: 800px;
+            background: white; border-radius: 15px; box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            padding: 2rem; margin: 2rem auto; max-width: 800px;
         }
-        .detail-container .detail-item {
-            margin-bottom: 1rem;
-        }
-        .detail-container .detail-item strong {
-            color: #1e3a8a;
-            font-weight: 600;
-        }
-        .detail-container .btn {
-            border-radius: 25px;
-            padding: 0.5rem 1.5rem;
-            transition: all 0.3s ease;
-        }
-        .detail-container .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+        .detail-item { margin-bottom: 1rem; }
+        .detail-item strong { color: #1e3a8a; font-weight: 600; min-width: 150px; display: inline-block; }
+        .btn { border-radius: 25px; padding: 0.5rem 1.5rem; transition: all 0.3s ease; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
 
-        /* Responsive */
+        /* Modal */
+        .modal-header { background: #1e3a8a; color: white; }
+        .modal-title i { margin-right: 0.5rem; }
+        .info-group { margin-bottom: 1.5rem; }
+        .info-group h6 { color: #1e3a8a; border-bottom: 2px solid #3b82f6; padding-bottom: 0.5rem; }
+        .room-img { max-height: 200px; object-fit: cover; border-radius: 10px; }
+        .hotel-img { max-height: 150px; object-fit: cover; border-radius: 10px; }
+
         @media (max-width: 768px) {
-            .header h2 {
-                font-size: 1.5rem;
-            }
-            .detail-container {
-                padding: 1.5rem;
-                margin: 1rem;
-            }
-            .detail-container .btn {
-                width: 100%;
-                margin-bottom: 0.5rem;
-            }
+            .header h2 { font-size: 1.5rem; }
+            .detail-container { padding: 1.5rem; margin: 1rem; }
+            .detail-item strong { display: block; min-width: auto; }
+            .btn { width: 100%; margin-bottom: 0.5rem; }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
     <div class="header">
-        <img src="https://images.unsplash.com/photo-1542314831-8f7d16dd2b3b" alt="Hotel Banner" class="img-fluid">
-        <h2><i class="fas fa-box me-2"></i> Chi Tiết Đơn Đặt Phòng</h2>
+        <img src="https://images.unsplash.com/photo-1542314831-8f7d16dd2b3b" alt="Hotel" class="img-fluid">
+        <h2>Chi Tiết Đơn Đặt Phòng</h2>
     </div>
 
     <!-- Detail Container -->
     <div class="container detail-container">
-        <%
-            if (error != null) {
-        %>
+        <% if (error != null) { %>
             <div class="alert alert-danger d-flex align-items-center" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>
                 <div><%= error %></div>
             </div>
-        <%
-            } else if (booking == null) {
-        %>
+        <% } else if (booking == null) { %>
             <div class="alert alert-danger d-flex align-items-center" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>
-                <div>Không tìm thấy thông tin đơn đặt phòng.</div>
+                <div>Không tìm thấy đơn đặt phòng.</div>
             </div>
-        <%
-            } else {
-        %>
-            <div class="detail-item">
-                <strong>Mã đơn:</strong> <%= booking.getMaDon() != null ? booking.getMaDon() : "N/A" %>
+        <% } else { %>
+            <div class="text-center mb-4">
+                <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#bookingDetailModal">
+                    Xem chi tiết đơn
+                </button>
             </div>
-            <div class="detail-item">
-                <strong>Khách hàng:</strong> <%= booking.getTenKhachHang() != null ? booking.getTenKhachHang() : "N/A" %>
+
+            <div class="mt-3 text-center">
+                <a href="dondatphong?action=list" class="btn btn-outline-secondary">
+                    Quay lại danh sách
+                </a>
+                <a href="dondatphong?action=cancel&bookingId=<%= booking.getId() %>"
+                   class="btn btn-danger"
+                   onclick="return confirm('Bạn có chắc muốn hủy đơn này?')">
+                    Hủy đơn
+                </a>
             </div>
-            <div class="detail-item">
-                <strong>Phòng:</strong> <%= booking.getTenPhong() != null ? booking.getTenPhong() : "N/A" %>
-            </div>
-            <div class="detail-item">
-                <strong>Ngày nhận phòng:</strong> <%= booking.getNgayNhan() != null ? booking.getNgayNhan() : "N/A" %>
-            </div>
-            <div class="detail-item">
-                <strong>Ngày trả phòng:</strong> <%= booking.getNgayTra() != null ? booking.getNgayTra() : "N/A" %>
-            </div>
-            <div class="detail-item">
-                <strong>Thời gian đặt:</strong> <%= booking.getThoiGianDat() != null ? booking.getThoiGianDat() : "N/A" %>
-            </div>
-            <div class="mt-3">
-                <a href="dondatphong?action=list" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i> Quay lại danh sách đơn</a>
-                <a href="dondatphong?action=cancel&bookingId=<%= booking.getId() %>" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn hủy đơn này?')"><i class="fas fa-trash me-2"></i> Hủy đơn</a>
-            </div>
-        <%
-            }
-        %>
+        <% } %>
     </div>
 
-    <!-- Bootstrap 5 JS and Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- POPUP: Chi tiết đơn + phòng + khách sạn -->
+    <div class="modal fade" id="bookingDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Chi tiết đơn đặt phòng
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <% if (booking != null) { %>
+                        <div class="row">
+                            <!-- Cột 1: Thông tin đơn -->
+                            <div class="col-lg-4 info-group">
+                                <h6>Thông tin đặt phòng</h6>
+                                <p><strong>Mã đơn:</strong> <span class="text-primary"><%= booking.getMaDon() %></span></p>
+                                <p><strong>Khách hàng:</strong> <%= booking.getTenKhachHang() %></p>
+                                <p><strong>Nhận phòng:</strong> <%= booking.getNgayNhan() %></p>
+                                <p><strong>Trả phòng:</strong> <%= booking.getNgayTra() %></p>
+                                <p><strong>Thời gian đặt:</strong> <%= booking.getThoiGianDat() %></p>
+                            </div>
+
+                            <!-- Cột 2: Thông tin phòng -->
+                            <div class="col-lg-4 info-group">
+                                <h6>Thông tin phòng</h6>
+                                <% if (phong != null) { %>
+                                 
+                                    <p><strong>Tên:</strong> <%= phong.getTenPhong() %></p>
+                                    <p><strong>Loại:</strong> <%= phong.getLoai() %></p>
+                                    <p><strong>Giá:</strong> <span class="text-success fw-bold"><%= String.format("%,d", phong.getGia()) %> VNĐ</span>/đêm</p>
+                                    <p><strong>Sức chứa:</strong> <%= phong.getSucChua() %> người</p>
+                                    <% if (phong.getMoTa() != null && !phong.getMoTa().isEmpty()) { %>
+                                        <p><strong>Mô tả:</strong> <%= phong.getMoTa() %></p>
+                                    <% } %>
+                                <% } else { %>
+                                    <p class="text-muted">Không có thông tin phòng.</p>
+                                <% } %>
+                            </div>
+
+                            <!-- Cột 3: Thông tin khách sạn -->
+                            <div class="col-lg-4 info-group">
+                                <h6>Thông tin khách sạn</h6>
+                                <% if (khachSan != null) { %>
+                                   
+                                    <p><strong>Tên:</strong> <%= khachSan.getTen() %></p>
+                                    <p><strong>Địa chỉ:</strong> <%= khachSan.getDiaChi() %></p>
+                                    <% if (khachSan.getSoDienThoai() != null) { %>
+                                        <p><strong>Điện thoại:</strong> <%= khachSan.getSoDienThoai() %></p>
+                                    <% } %>
+                                   
+                                   
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

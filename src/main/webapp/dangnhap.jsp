@@ -1,4 +1,3 @@
-
 <%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -130,23 +129,24 @@
     <!-- Header -->
     <div class="header">
         <img src="https://images.unsplash.com/photo-1542314831-8f7d16dd2b3b" alt="Hotel Banner" class="img-fluid">
-        <h2><i class="fas fa-lock me-2"></i> Đăng Nhập Tài Khoản</h2>
+        <h2>Đăng Nhập Tài Khoản</h2>
     </div>
 
     <!-- Form Container -->
     <div class="container form-container">
         <% if (request.getParameter("error") != null) { %>
             <div class="alert alert-danger d-flex align-items-center" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>
                 <div>Sai tài khoản hoặc mật khẩu!</div>
             </div>
         <% } %>
 
+        <!-- ĐÃ THÊM DÒNG NÀY -->
         <form id="loginForm" action="khachhang" method="post">
+            <input type="hidden" name="action" value="login">
+
             <div class="mb-3">
                 <label for="taikhoan" class="form-label">Tài khoản (Email hoặc SĐT)</label>
                 <div class="input-group">
-                    <i class="fas fa-user"></i>
                     <input type="text" class="form-control" id="taikhoan" name="taikhoan" required>
                 </div>
                 <div class="error-message" id="taikhoanError"></div>
@@ -155,18 +155,17 @@
             <div class="mb-3">
                 <label for="matkhau" class="form-label">Mật khẩu</label>
                 <div class="input-group">
-                    <i class="fas fa-lock"></i>
                     <input type="password" class="form-control" id="matkhau" name="matkhau" required>
                 </div>
                 <div class="error-message" id="matkhauError"></div>
             </div>
 
-            <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt me-2"></i> Đăng nhập</button>
+            <button type="submit" class="btn btn-primary">Đăng nhập</button>
         </form>
 
         <div class="action-links mt-3">
             <p>Chưa có tài khoản? <a href="dangky.jsp">Đăng ký ngay</a></p>
-            <p><a href="index.jsp"><i class="fas fa-arrow-left me-1"></i> Quay lại trang chủ</a></p>
+            <p><a href="index.jsp">Quay lại trang chủ</a></p>
         </div>
     </div>
 

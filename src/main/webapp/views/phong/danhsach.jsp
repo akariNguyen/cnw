@@ -223,7 +223,7 @@
                                 <td><%= p.getLoai() %></td>
                                 <td><%= String.format("%,.0f", (double) p.getGia()) %> VNĐ</td>
                                 <td><%= p.getSucChua() %></td>
-                                <td><%= p.getSoLuong() %></td>
+                               
                                 <td><%= p.getMoTa() %></td>
                                 <td>
                                     <% if (p.getHinhAnh() != null && !p.getHinhAnh().isEmpty()) { %>

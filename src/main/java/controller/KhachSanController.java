@@ -1,6 +1,8 @@
 package controller;
 
+import model.bean.ChuKhachSan;
 import model.bean.KhachSan;
+import model.bo.ChuKhachSanBO;
 import model.bo.KhachSanBO;
 import model.dao.KhachSanDAO;
 
@@ -21,6 +23,10 @@ public class KhachSanController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        // 🔥 FIX ENCODING: Set UTF-8 cho request/response để xử lý tiếng Việt có dấu
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
         String action = request.getParameter("action");
         if (action == null || action.equals("")) {
@@ -57,8 +63,11 @@ public class KhachSanController extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy khách sạn");
                 return;
             }
+            ChuKhachSan owner = new ChuKhachSanBO().getById(ks.getOwnerId());
 
             request.setAttribute("khachSan", ks);
+            request.setAttribute("owner", owner); // THÊM DÒNG NÀY
+
             RequestDispatcher rd = request.getRequestDispatcher("/views/khachsan/chitiet.jsp");
             rd.forward(request, response);
 

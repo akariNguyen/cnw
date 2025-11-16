@@ -57,6 +57,17 @@
     <url-pattern>/tinhtrangphong</url-pattern>
   </servlet-mapping>
 
+    <!-- ===== Servlet: Owner Khach San ===== -->
+  <servlet>
+    <servlet-name>OwnerKhachSanController</servlet-name>
+    <servlet-class>controller.OwnerKhachSanController</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>OwnerKhachSanController</servlet-name>
+    <url-pattern>/owner/hotel</url-pattern>
+  </servlet-mapping>
+  
   <!-- ===== Trang mặc định khi mở project ===== -->
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>

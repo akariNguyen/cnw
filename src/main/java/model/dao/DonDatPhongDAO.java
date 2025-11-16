@@ -107,27 +107,27 @@ public class DonDatPhongDAO {
             e.printStackTrace();
         }
     }
-
+    
     // ===========================
     // LẤY ĐƠN ĐẶT PHÒNG THEO KHÁCH HÀNG
     // ===========================
+ // ... (giữ nguyên phần cũ)
+
     public List<DonDatPhong> getByKhachHangId(int khachHangId) {
         List<DonDatPhong> list = new ArrayList<>();
-
-        String sql = "SELECT ddp.*, p.ten_phong " +
-                     "FROM don_dat_phong ddp " +
-                     "JOIN phong p ON ddp.phong_id = p.id " +
-                     "WHERE ddp.khach_hang_id = ?";
-
+        String sql = """
+            SELECT ddp.*, p.ten_phong 
+            FROM don_dat_phong ddp 
+            JOIN phong p ON ddp.phong_id = p.id 
+            WHERE ddp.khach_hang_id = ? 
+            ORDER BY ddp.thoi_gian_dat DESC
+            """;
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setInt(1, khachHangId);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-
-                DonDatPhong d = new DonDatPhong(
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    DonDatPhong d = new DonDatPhong(
                         rs.getInt("id"),
                         rs.getInt("phong_id"),
                         khachHangId,
@@ -135,18 +135,14 @@ public class DonDatPhongDAO {
                         rs.getDate("ngay_tra"),
                         rs.getTimestamp("thoi_gian_dat"),
                         rs.getString("ma_don")
-                );
-                d.setTenPhong(rs.getString("ten_phong"));
-
-                list.add(d);
+                    );
+                    d.setTenPhong(rs.getString("ten_phong"));
+                    list.add(d);
+                }
             }
-
-            rs.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return list;
     }
 
@@ -209,4 +205,43 @@ public class DonDatPhongDAO {
 
         return list;
     }
+    public boolean isPhongDaDat(int phongId, Date ngayNhan, Date ngayTra) {
+        String sql = """
+            SELECT COUNT(*) 
+            FROM don_dat_phong 
+            WHERE phong_id = ? 
+              AND ngay_nhan < ? 
+              AND ngay_tra > ?
+            """;
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, phongId);
+            stmt.setDate(2, ngayTra);   // Đơn cũ kết thúc sau ngày nhận mới
+            stmt.setDate(3, ngayNhan);  // Đơn cũ bắt đầu trước ngày trả mới
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // ===========================
+    // HÀM HỖ TRỢ: Map ResultSet → DonDatPhong
+    // ===========================
+    private DonDatPhong mapRow(ResultSet rs) throws SQLException {
+        return new DonDatPhong(
+            rs.getInt("id"),
+            rs.getInt("phong_id"),
+            rs.getInt("khach_hang_id"),
+            rs.getDate("ngay_nhan"),
+            rs.getDate("ngay_tra"),
+            rs.getTimestamp("thoi_gian_dat"),
+            rs.getString("ma_don")
+        );
+    }
+    
 }
