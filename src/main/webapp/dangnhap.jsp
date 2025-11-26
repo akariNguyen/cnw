@@ -1,204 +1,250 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập tài khoản</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous">
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Đăng Nhập • LUXE STAY</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --border: #334155;
+            --accent: #06b6d4;
+            --gold: #fbbf24;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: #f4f7fc;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text);
             font-family: 'Inter', sans-serif;
-            color: #333;
+            min-height: 100vh;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
         }
 
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            color: white;
-            padding: 3rem 0;
-            text-align: center;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        /* Background */
+        .login-bg {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(rgba(15,23,42,0.92), rgba(15,23,42,0.98)),
+                        url('https://images.unsplash.com/photo-1611892441792-ae6af465f35c?w=1920&q=80') center/cover no-repeat;
+            z-index: -2;
+        }
+        .login-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(6,182,212,0.15), transparent 70%);
+            animation: breathe 18s infinite;
+        }
+        @keyframes breathe { 0%,100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+
+        /* Login Card */
+        .login-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
             position: relative;
             overflow: hidden;
+            animation: fadeInUp 0.9s ease-out;
         }
-        .header img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 15px;
-            margin-bottom: 1.5rem;
-            opacity: 0.9;
-            transition: transform 0.3s ease;
-        }
-        .header img:hover {
-            transform: scale(1.02);
-        }
-        .header h2 {
-            font-weight: 700;
-            font-size: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent), var(--gold));
         }
 
-        /* Form Container */
-        .form-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-            margin: 2rem auto;
-            max-width: 500px;
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
         }
-        .form-container .form-label {
-            font-weight: 500;
-            color: #1e3a8a;
+        .login-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #06b6d4, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
         }
-        .form-container .form-control {
-            border-radius: 10px;
-            border: 1px solid #d1d5db;
-            padding-left: 2.5rem;
-            transition: all 0.3s ease;
+        .login-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
         }
-        .form-container .form-control:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+
+        /* Form Input - CHỮ TRẮNG SÁNG 100% */
+        .form-control {
+            background: rgba(15,23,42,0.8) !important;
+            border: 1px solid var(--border);
+            color: #ffffff !important;                    /* CHỮ TRẮNG SÁNG */
+            caret-color: var(--gold);                      /* Con trỏ nháy vàng gold */
+            border-radius: 16px;
+            padding: 0.9rem 1rem 0.9rem 3rem;
+            font-size: 1rem;
+            transition: all 0.4s;
         }
-        .form-container .input-group {
+        .form-control::placeholder {
+            color: #94a3b8 !important;                    /* Placeholder xám nhẹ, dễ đọc */
+            font-style: italic;
+        }
+        .form-control:focus {
+            background: rgba(15,23,42,0.95) !important;
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 4px rgba(6,182,212,0.2);
+            color: #ffffff !important;
+        }
+
+        .input-group {
             position: relative;
         }
-        .form-container .input-group i {
+        .input-group i {
             position: absolute;
             top: 50%;
-            left: 0.75rem;
+            left: 1rem;
             transform: translateY(-50%);
-            color: #6b7280;
+            color: var(--accent);
+            font-size: 1.3rem;
             z-index: 10;
+            transition: all 0.3s;
         }
-        .form-container .btn {
-            border-radius: 25px;
-            padding: 0.5rem 1.5rem;
-            transition: all 0.3s ease;
+        .form-control:focus + i {
+            color: var(--gold);
+            transform: translateY(-50%) scale(1.2);
         }
-        .form-container .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+        /* Button */
+        .btn-login {
+            background: linear-gradient(135deg, var(--accent), #0891b2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.9rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1.5rem;
+            transition: all 0.4s;
+            box-shadow: 0 8px 25px rgba(6,182,212,0.4);
         }
-        .form-container .error-message {
-            color: #dc3545;
-            font-size: 0.9rem;
-            margin-top: 0.25rem;
+        .btn-login:hover {
+            transform: translateY(-4px);
+            background: linear-gradient(135deg, var(--gold), #d4a017);
+            box-shadow: 0 15px 35px rgba(251,191,36,0.5);
+            color: #000;
         }
 
         /* Links */
-        .action-links a {
-            margin-right: 1rem;
-            transition: all 0.3s ease;
+        .login-links {
+            text-align: center;
+            margin-top: 2rem;
         }
-        .action-links a:hover {
-            color: #3b82f6;
-            text-decoration: underline;
+        .login-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .login-links a:hover {
+            color: var(--accent);
+        }
+        .login-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        .login-links a:hover::after {
+            width: 100%;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h2 {
-                font-size: 1.5rem;
-            }
-            .form-container {
-                padding: 1.5rem;
-                margin: 1rem;
-            }
-            .form-container .btn {
-                width: 100%;
-            }
-            .action-links a {
-                display: block;
-                margin: 0.5rem 0;
-            }
+        /* Error Alert */
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
-        <img src="https://images.unsplash.com/photo-1542314831-8f7d16dd2b3b" alt="Hotel Banner" class="img-fluid">
-        <h2>Đăng Nhập Tài Khoản</h2>
-    </div>
 
-    <!-- Form Container -->
-    <div class="container form-container">
+    <div class="login-bg"></div>
+
+    <div class="login-card">
+        <div class="login-header">
+            <h1>Đăng Nhập</h1>
+            <p>Chào mừng trở lại • Trải nghiệm thượng lưu đang chờ bạn</p>
+        </div>
+
         <% if (request.getParameter("error") != null) { %>
-            <div class="alert alert-danger d-flex align-items-center" role="alert">
-                <div>Sai tài khoản hoặc mật khẩu!</div>
+            <div class="alert alert-danger mb-4">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Sai tài khoản hoặc mật khẩu. Vui lòng thử lại!
             </div>
         <% } %>
 
-        <!-- ĐÃ THÊM DÒNG NÀY -->
-        <form id="loginForm" action="khachhang" method="post">
+        <form action="khachhang" method="post">
             <input type="hidden" name="action" value="login">
 
-            <div class="mb-3">
-                <label for="taikhoan" class="form-label">Tài khoản (Email hoặc SĐT)</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="taikhoan" name="taikhoan" required>
-                </div>
-                <div class="error-message" id="taikhoanError"></div>
+            <div class="mb-4 input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" class="form-control" name="taikhoan" placeholder="Email hoặc Số điện thoại" required>
             </div>
 
-            <div class="mb-3">
-                <label for="matkhau" class="form-label">Mật khẩu</label>
-                <div class="input-group">
-                    <input type="password" class="form-control" id="matkhau" name="matkhau" required>
-                </div>
-                <div class="error-message" id="matkhauError"></div>
+            <div class="mb-4 input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" class="form-control" name="matkhau" placeholder="Mật khẩu" required>
             </div>
 
-            <button type="submit" class="btn btn-primary">Đăng nhập</button>
+            <button type="submit" class="btn-login">
+                <i class="fas fa-sign-in-alt me-2"></i>
+                Đăng Nhập Ngay
+            </button>
         </form>
 
-        <div class="action-links mt-3">
-            <p>Chưa có tài khoản? <a href="dangky.jsp">Đăng ký ngay</a></p>
-            <p><a href="index.jsp">Quay lại trang chủ</a></p>
+        <div class="login-links">
+            <p>Chưa có tài khoản? 
+                <a href="dangky.jsp">Đăng ký miễn phí</a>
+            </p>
+            <p>
+                <a href="index.jsp"><i class="fas fa-home me-1"></i>Quay lại trang chủ</a>
+            </p>
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS and Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-        // Client-side form validation
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            let isValid = true;
-            const taikhoan = document.getElementById('taikhoan').value.trim();
-            const matkhau = document.getElementById('matkhau').value;
-
-            // Reset error messages
-            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
-
-            // Validate tài khoản
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const sdtPattern = /^[0-9]{10,11}$/;
-            if (!emailPattern.test(taikhoan) && !sdtPattern.test(taikhoan)) {
-                document.getElementById('taikhoanError').textContent = 'Vui lòng nhập email hoặc số điện thoại hợp lệ.';
-                isValid = false;
-            }
-
-            // Validate mật khẩu
-            if (matkhau.length < 6) {
-                document.getElementById('matkhauError').textContent = 'Mật khẩu phải có ít nhất 6 ký tự.';
-                isValid = false;
-            }
-
-            if (!isValid) {
-                e.preventDefault();
-            }
-        });
+        window.onload = () => {
+            document.querySelector('input[name="taikhoan"]').focus();
+        };
     </script>
 </body>
 </html>

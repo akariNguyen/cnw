@@ -102,7 +102,7 @@ public class OwnerKhachSanController extends HttpServlet {
         }
 
         request.setAttribute("khachSan", ks);
-        request.getRequestDispatcher("/views/owner/edit_hotel.jsp")
+	        request.getRequestDispatcher("/views/owner/edit_hotel.jsp")
                 .forward(request, response);
     }
 

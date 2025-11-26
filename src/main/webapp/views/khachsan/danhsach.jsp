@@ -1,263 +1,324 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="model.bean.KhachSan" %>
+<%
+    List<KhachSan> list = (List<KhachSan>) request.getAttribute("listKhachSan");
+%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách khách sạn</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous">
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Danh Sách Khách Sạn • LUXE STAY</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #f4f7fc;
-            font-family: 'Inter', sans-serif;
-            color: #333;
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --border: #334155;
+            --accent: #06b6d4;
+            --gold: #fbbf24;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
         }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+
+        /* Background */
+        .list-bg {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(rgba(15,23,42,0.94), rgba(15,23,42,0.98)),
+                        url('https://images.unsplash.com/photo-1611892441792-ae6af465f35c?w=1920&q=80') center/cover no-repeat;
+            z-index: -2;
+        }
+        .list-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top center, rgba(6,182,212,0.18), transparent 70%);
+            animation: breathe 20s infinite;
+        }
+        @keyframes breathe { 0%,100% { opacity: 0.4; } 50% { opacity: 0.8; } }
 
         /* Header */
-        .header {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            color: white;
-            padding: 3rem 0;
+        .list-header {
             text-align: center;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
+            padding: 6rem 1rem 4rem;
         }
-        .header img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 15px;
-            margin-bottom: 1.5rem;
-            opacity: 0.9;
-            transition: transform 0.3s ease;
+        .list-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #06b6d4, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
         }
-        .header img:hover {
-            transform: scale(1.02);
-        }
-        .header h2 {
-            font-weight: 700;
-            font-size: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Table Container */
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-            margin: 2rem auto;
-            max-width: 1200px;
-        }
+        .list-header p { font-size: 1.3rem; color: var(--text-muted); }
 
         /* Search Bar */
-        .search-bar {
+        .search-container {
+            max-width: 700px;
+            margin: 0 auto 3rem;
             position: relative;
-            max-width: 500px;
+            z-index: 10;
         }
-        .search-bar input {
-            padding-left: 2.5rem;
-            border-radius: 25px;
-            border: 1px solid #d1d5db;
-            transition: all 0.3s ease;
+        .search-box {
+            background: rgba(30,41,59,0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
         }
-        .search-bar input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            width: 100%;
+            padding-left: 3.5rem;
         }
-        .search-bar i {
+        .search-box input::placeholder { color: #94a3b8; font-style: italic; }
+        .search-box i {
             position: absolute;
+            left: 1.5rem;
             top: 50%;
-            left: 0.75rem;
             transform: translateY(-50%);
-            color: #6b7280;
+            color: var(--accent);
+            font-size: 1.5rem;
         }
 
-        /* Table */
-        .table {
-            border-collapse: separate;
-            border-spacing: 0 0.5rem;
+        /* Hotel Grid */
+        .hotel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2.5rem;
+            padding: 0 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        .table th {
-            background: #3b82f6;
+
+        /* Hotel Card */
+        .hotel-card {
+            background: rgba(30,41,59,0.92);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            transition: all 0.5s ease;
+            position: relative;
+            border: 1px solid var(--border);
+        }
+        .hotel-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--accent), var(--gold));
+        }
+        .hotel-card:hover {
+            transform: translateY(-20px) scale(1.03);
+            box-shadow: 0 40px 80px rgba(6,182,212,0.4);
+        }
+
+        .hotel-img {
+            height: 220px;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)),
+                        url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80') center/cover;
+            position: relative;
+        }
+        .hotel-name {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
             color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+        }
+
+        .hotel-info {
+            padding: 2rem;
+        }
+        .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+        .info-row i {
+            color: var(--accent);
+            margin-right: 1rem;
+            font-size: 1.3rem;
+            width: 30px;
+        }
+        .info-row strong { color: var(--gold); min-width: 100px; }
+
+        .hotel-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .btn-detail {
+            flex: 1;
+            background: linear-gradient(135deg, var(--accent), #0891b2);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 50px;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            transition: all 0.4s;
+        }
+        .btn-detail:hover {
+            background: linear-gradient(135deg, var(--gold), #d4a017);
+            color: #000;
+            transform: translateY(-5px);
+        }
+        .btn-rooms {
+            flex: 1;
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
             padding: 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.4s;
         }
-        .table td {
-            background: #fff;
-            padding: 1rem;
-            transition: background 0.2s ease;
-        }
-        .table tbody tr:hover td {
-            background: #f1f5f9;
-        }
-        .action-buttons a {
-            margin-right: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-        }
-        .action-buttons a:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .btn-rooms:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(6,182,212,0.1);
         }
 
-        /* Pagination */
-        .pagination .page-link {
-            border-radius: 50%;
-            margin: 0 0.25rem;
-            color: #3b82f6;
-            font-weight: 500;
-            transition: all 0.3s ease;
+        .no-data {
+            text-align: center;
+            padding: 8rem 2rem;
+            color: var(--text-muted);
         }
-        .pagination .page-item.active .page-link {
-            background: #3b82f6;
-            border-color: #3b82f6;
-            color: white;
+        .no-data i { font-size: 6rem; margin-bottom: 2rem; color: #475569; }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin: 4rem auto 2rem;
+            max-width: 300px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 2px solid var(--border);
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            transition: all 0.4s;
         }
-        .pagination .page-link:hover {
-            background: #3b82f6;
-            color: white;
+        .back-home:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(6,182,212,0.1);
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            .header h2 {
-                font-size: 1.5rem;
-            }
-            .table-container {
-                padding: 1rem;
-            }
-            .search-bar {
-                max-width: 100%;
-            }
-            .table {
-                font-size: 0.9rem;
-            }
-            .action-buttons a {
-                display: block;
-                margin: 0.5rem 0;
-                text-align: center;
-            }
+            .list-header h1 { font-size: 3rem; }
+            .hotel-grid { grid-template-columns: 1fr; padding: 0 1rem; }
+            .hotel-actions { flex-direction: column; }
         }
     </style>
 </head>
 <body>
+
+    <div class="list-bg"></div>
+
     <!-- Header -->
-    <div class="header">
-        <img src="https://images.unsplash.com/photo-1542314831-8f7d16dd2b3b" alt="Hotel Banner" class="img-fluid">
-        <h2><i class="fas fa-hotel me-2"></i> Danh Sách Khách Sạn</h2>
+    <div class="list-header">
+        <h1>Khách Sạn Sang Trọng</h1>
+        <p>Khám phá những điểm đến đẳng cấp nhất Việt Nam</p>
     </div>
 
-    <!-- Table Container -->
-    <div class="container table-container">
+    <div class="container">
         <!-- Search Bar -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold">Danh Sách Khách Sạn</h4>
-            <div class="search-bar">
+        <div class="search-container">
+            <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo tên hoặc địa chỉ">
+                <input type="text" id="searchInput" placeholder="Tìm khách sạn theo tên hoặc địa chỉ...">
             </div>
         </div>
 
-        <%
-            List<KhachSan> list = (List<KhachSan>) request.getAttribute("listKhachSan");
-            if (list == null || list.isEmpty()) {
-        %>
-            <div class="alert alert-info d-flex align-items-center" role="alert">
-                <i class="fas fa-info-circle me-2"></i>
-                <div>Không có khách sạn nào trong hệ thống.</div>
-            </div>
-        <%
-            } else {
-        %>
-            <!-- Table -->
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered" id="hotelTable">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Tên Khách Sạn</th>
-                            <th>Địa Chỉ</th>
-                            <th>SĐT</th>
-                            <th>Chi Tiết</th>
-                            <th>Phòng</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <%
-                            int i = 1;
-                            for (KhachSan ks : list) {
-                        %>
-                            <tr>
-                                <td><%= i++ %></td>
-                                <td><%= ks.getTen() %></td>
-                                <td><%= ks.getDiaChi() %></td>
-                                <td><%= ks.getSoDienThoai() %></td>
-                                <td class="action-buttons">
-                                    <a href="khachsan?action=detail&id=<%= ks.getId() %>" class="btn btn-sm btn-primary"><i class="fas fa-eye me-1"></i> Xem chi tiết</a>
-                                </td>
-                                <td class="action-buttons">
-                                    <a href="phong?action=list&khachSanId=<%= ks.getId() %>" class="btn btn-sm btn-info"><i class="fas fa-door-open me-1"></i> Xem phòng</a>
-                                </td>
-                            </tr>
-                        <%
-                            }
-                        %>
-                    </tbody>
-                </table>
-            </div>
+        <!-- Hotel Grid -->
+        <div class="hotel-grid">
+            <% if (list == null || list.isEmpty()) { %>
+                <div class="no-data">
+                    <i class="fas fa-hotel"></i>
+                    <h2>Chưa có khách sạn nào trong hệ thống</h2>
+                    <p>Hãy đăng ký làm chủ khách sạn ngay hôm nay!</p>
+                </div>
+            <% } else { %>
+                <% for (KhachSan ks : list) { %>
+                    <div class="hotel-card">
+                        <div class="hotel-img">
+                            <div class="hotel-name"><%= ks.getTen() %></div>
+                        </div>
+                        <div class="hotel-info">
+                            <div class="info-row">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <strong>Địa chỉ</strong><br>
+                                    <span><%= ks.getDiaChi() %></span>
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-phone-alt"></i>
+                                <div>
+                                    <strong>Liên hệ</strong><br>
+                                    <span><%= ks.getSoDienThoai() %></span>
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-info-circle"></i>
+                                <div>
+                                    <strong>Mô tả</strong><br>
+                                    <span><%= ks.getMoTa() != null && !ks.getMoTa().isEmpty() ? ks.getMoTa().substring(0, Math.min(ks.getMoTa().length(), 80)) + "..." : "Khách sạn sang trọng với dịch vụ 5 sao" %></span>
+                                </div>
+                            </div>
 
-            <!-- Pagination (Placeholder) -->
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item"><a class="page-link" href="#">Trước</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Sau</a></li>
-                </ul>
-            </nav>
-        <%
-            }
-        %>
+                            <div class="hotel-actions">
+                                <a href="${pageContext.request.contextPath}/khachsan?action=detail&id=<%= ks.getId() %>" 
+                                   class="btn-detail">
+                                    <i class="fas fa-eye me-2"></i> Xem Chi Tiết
+                                </a>
+                                <a href="${pageContext.request.contextPath}/phong?action=list&khachSanId=<%= ks.getId() %>" 
+                                   class="btn-rooms">
+                                    <i class="fas fa-bed me-2"></i> Xem Phòng
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            <% } %>
+        </div>
 
         <!-- Back to Home -->
-        <p class="mt-4"><a href="index.jsp" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i> Quay lại trang chủ</a></p>
+        <a href="${pageContext.request.contextPath}/index.jsp" class="back-home">
+            <i class="fas fa-home me-2"></i> Về Trang Chủ
+        </a>
     </div>
 
-    <!-- Bootstrap 5 JS and Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-        // Search functionality
+        // Live Search
         document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchText = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#hotelTable tbody tr');
-            rows.forEach(row => {
-                const ten = row.cells[1].textContent.toLowerCase();
-                const diaChi = row.cells[2].textContent.toLowerCase();
-                row.style.display = (ten.includes(searchText) || diaChi.includes(searchText)) ? '' : 'none';
-            });
-        });
-
-        // Pagination (client-side placeholder)
-        document.querySelectorAll('.page-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                // Add server-side pagination logic here
-                alert('Chức năng phân trang chưa được triển khai. Vui lòng thêm logic phía server.');
+            const text = e.target.value.toLowerCase();
+            document.querySelectorAll('.hotel-card').forEach(card => {
+                const name = card.querySelector('.hotel-name').textContent.toLowerCase();
+                const address = card.querySelector('.info-row span').textContent.toLowerCase();
+                card.style.display = (name.includes(text) || address.includes(text)) ? '' : 'none';
             });
         });
     </script>

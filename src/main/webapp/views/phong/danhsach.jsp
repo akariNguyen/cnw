@@ -7,178 +7,224 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách phòng - Khách sạn ID: <%= request.getAttribute("khachSanId") %></title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous">
-    <!-- Google Fonts: Inter -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --border: #334155;
+            --accent: #06b6d4;
+            --gold: #fbbf24;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --success: #10b981;
+        }
         body {
-            background-color: #f4f7fc;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text);
             font-family: 'Inter', sans-serif;
-            color: #333;
+            min-height: 100vh;
         }
 
-        /* Header */
         .header {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
             color: white;
-            padding: 3rem 0;
+            padding: 4rem 0;
             text-align: center;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
             position: relative;
             overflow: hidden;
         }
-        .header img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 15px;
-            margin-bottom: 1.5rem;
-            opacity: 0.9;
-            transition: transform 0.3s ease;
-        }
-        .header img:hover {
-            transform: scale(1.02);
+        .header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1542314831-8f7d16dd2b3b?w=1920') center/cover no-repeat;
+            opacity: 0.15;
         }
         .header h2 {
-            font-weight: 700;
-            font-size: 2rem;
+            font-size: 2.6rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Table Container */
         .table-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-            margin: 2rem auto;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: -4rem auto 3rem;
             max-width: 1400px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .table-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--accent), var(--gold));
+            border-radius: 20px 20px 0 0;
         }
 
-        /* Search Bar */
         .search-bar {
             position: relative;
-            max-width: 500px;
         }
         .search-bar input {
-            padding-left: 2.5rem;
-            border-radius: 25px;
-            border: 1px solid #d1d5db;
-            transition: all 0.3s ease;
+            background: rgba(15,23,42,0.9);
+            border: 1px solid var(--border);
+            color: white;
+            padding-left: 3rem;
+            border-radius: 50px;
+            height: 54px;
+            font-size: 1.1rem;
         }
-        .search-bar input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
+        .search-bar input::placeholder { color: var(--muted); opacity: 0.8; }
         .search-bar i {
             position: absolute;
+            left: 1rem;
             top: 50%;
-            left: 0.75rem;
             transform: translateY(-50%);
-            color: #6b7280;
+            color: var(--accent);
+            font-size: 1.4rem;
+            z-index: 1;
         }
 
-        /* Table */
         .table {
-            border-collapse: separate;
-            border-spacing: 0 0.5rem;
+            color: var(--text);
+            margin-bottom: 0;
         }
-        .table th {
-            background: #3b82f6;
+        .table thead {
+            background: linear-gradient(135deg, var(--accent), #0891b2);
             color: white;
-            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 1rem;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        .table tbody tr {
+            background: rgba(15,23,42,0.7);
+            transition: all 0.4s ease;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+        .table tbody tr:hover {
+            background: rgba(6,182,212,0.25);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
         .table td {
-            background: #fff;
-            padding: 1rem;
             vertical-align: middle;
-            transition: background 0.2s ease;
-        }
-        .table tbody tr:hover td {
-            background: #f1f5f9;
-        }
-        .table img {
-            max-width: 100px;
-            height: auto;
-            border-radius: 8px;
-            transition: transform 0.3s ease;
-        }
-        .table img:hover {
-            transform: scale(1.05);
-        }
-        .action-buttons a {
-            margin-right: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-        }
-        .action-buttons a:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+            padding: 1.5rem 1rem;
         }
 
-        /* Pagination */
+        /* Sửa ảnh trong bảng - TO RÕ ĐẸP */
+        .room-thumb {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            transition: transform 0.4s;
+        }
+        .room-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* Sửa badge loại phòng - DÙNG BG-PRIMARY CHUẨN BOOTSTRAP */
+        .badge-type {
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .btn-book {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 50px;
+            padding: 0.8rem 2rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 10px 25px rgba(16,185,129,0.4);
+            transition: all 0.4s;
+        }
+        .btn-book:hover {
+            background: linear-gradient(135deg, var(--gold), #d4a017);
+            color: #000;
+            transform: translateY(-5px);
+        }
+
+        .alert-info {
+            background: rgba(6,182,212,0.15);
+            border: 1px solid var(--accent);
+            color: var(--text);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+        }
+
         .pagination .page-link {
-            border-radius: 50%;
-            margin: 0 0.25rem;
-            color: #3b82f6;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            background: rgba(15,23,42,0.8);
+            border: none;
+            color: var(--text);
+            border-radius: 50% !important;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 8px;
+            font-weight: 600;
         }
         .pagination .page-item.active .page-link {
-            background: #3b82f6;
-            border-color: #3b82f6;
-            color: white;
+            background: var(--gold);
+            color: #000;
+            font-weight: bold;
         }
-        .pagination .page-link:hover {
-            background: #3b82f6;
+
+        .btn-outline-secondary {
+            border-radius: 50px;
+            padding: 1rem 3rem;
+            border: 2px solid var(--border);
+            color: var(--text);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .btn-outline-secondary:hover {
+            background: var(--accent);
+            border-color: var(--accent);
             color: white;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            .header h2 {
-                font-size: 1.5rem;
-            }
-            .table-container {
-                padding: 1rem;
-            }
-            .search-bar {
-                max-width: 100%;
-            }
-            .table {
-                font-size: 0.9rem;
-            }
-            .table img {
-                max-width: 80px;
-            }
-            .action-buttons a {
-                display: block;
-                margin: 0.5rem 0;
-                text-align: center;
-            }
+            .header h2 { font-size: 1.9rem; }
+            .table-container { padding: 1.5rem; margin: -3rem auto 2rem; }
+            .room-thumb { width: 100px; height: 70px; }
+            .btn-book { width: 100%; padding: 1rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
+
     <div class="header">
-        <img src="https://images.unsplash.com/photo-1542314831-8f7d16dd2b3b" alt="Hotel Banner" class="img-fluid">
-        <h2><i class="fas fa-hotel me-2"></i> Danh Sách Phòng - Khách Sạn ID: <%= request.getAttribute("khachSanId") %></h2>
+        <div class="container position-relative">
+            <h2>Danh Sách Phòng - Khách Sạn ID: <%= request.getAttribute("khachSanId") %></h2>
+        </div>
     </div>
 
-    <!-- Table Container -->
     <div class="container table-container">
-        <!-- Search Bar -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold">Danh Sách Phòng</h4>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-3">
+            <h4 class="fw-bold mb-0 text-info">Danh Sách Phòng</h4>
             <div class="search-bar">
                 <i class="fas fa-search"></i>
                 <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo tên, loại hoặc giá">
@@ -189,16 +235,16 @@
             List<Phong> list = (List<Phong>) request.getAttribute("listPhong");
             if (list == null || list.isEmpty()) {
         %>
-            <div class="alert alert-info d-flex align-items-center" role="alert">
-                <i class="fas fa-info-circle me-2"></i>
-                <div>Không có phòng nào được đăng ký cho khách sạn này.</div>
+            <div class="alert alert-info">
+                <i class="fas fa-bed fa-4x mb-4 text-info"></i>
+                <h3>Chưa có phòng nào được đăng ký</h3>
+                <p>Chủ khách sạn đang cập nhật danh sách phòng...</p>
             </div>
         <%
             } else {
         %>
-            <!-- Table -->
             <div class="table-responsive">
-                <table class="table table-hover table-bordered" id="roomTable">
+                <table class="table table-hover align-middle" id="roomTable">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -206,7 +252,6 @@
                             <th>Loại</th>
                             <th>Giá</th>
                             <th>Sức Chứa</th>
-                            <th>Số Lượng</th>
                             <th>Mô Tả</th>
                             <th>Hình Ảnh</th>
                             <th>Đặt Phòng</th>
@@ -218,22 +263,23 @@
                             for (Phong p : list) {
                         %>
                             <tr>
-                                <td><%= i++ %></td>
-                                <td><%= p.getTenPhong() %></td>
-                                <td><%= p.getLoai() %></td>
-                                <td><%= String.format("%,.0f", (double) p.getGia()) %> VNĐ</td>
-                                <td><%= p.getSucChua() %></td>
-                               
-                                <td><%= p.getMoTa() %></td>
+                                <td class="text-warning fw-bold"><%= i++ %></td>
+                                <td><strong class="text-gold"><%= p.getTenPhong() %></strong></td>
+                                <td><span class="badge-type"><%= p.getLoai() %></span></td>
+                                <td><strong class="text-danger fs-4"><%= String.format("%,.0f", (double) p.getGia()) %> VNĐ</strong></td>
+                                <td><i class="fas fa-users text-info me-2"></i><%= p.getSucChua() %> người</td>
+                                <td class="text-muted"><%= p.getMoTa() != null ? p.getMoTa() : "Chưa có mô tả" %></td>
                                 <td>
                                     <% if (p.getHinhAnh() != null && !p.getHinhAnh().isEmpty()) { %>
-                                        <img src="<%= p.getHinhAnh() %>" alt="Hình phòng" class="img-fluid">
+                                        <img src="<%= p.getHinhAnh() %>" alt="Phòng <%= p.getTenPhong() %>" class="room-thumb">
                                     <% } else { %>
-                                        <span class="text-muted">Không có</span>
+                                        <div class="bg-secondary text-center text-white rounded-4 p-3">Không có ảnh</div>
                                     <% } %>
                                 </td>
-                                <td class="action-buttons">
-                                    <a href="form_datphong.jsp?phongId=<%= p.getId() %>" class="btn btn-sm btn-success"><i class="fas fa-book me-1"></i> Đặt phòng</a>
+                                <td>
+                                    <a href="form_datphong.jsp?phongId=<%= p.getId() %>" class="btn btn-book">
+                                        Đặt phòng
+                                    </a>
                                 </td>
                             </tr>
                         <%
@@ -243,8 +289,7 @@
                 </table>
             </div>
 
-            <!-- Pagination (Placeholder) -->
-            <nav aria-label="Page navigation">
+            <nav aria-label="Page navigation" class="mt-5">
                 <ul class="pagination justify-content-center">
                     <li class="page-item"><a class="page-link" href="#">Trước</a></li>
                     <li class="page-item active"><a class="page-link" href="#">1</a></li>
@@ -257,31 +302,21 @@
             }
         %>
 
-        <!-- Back to Hotel List -->
-        <p class="mt-4"><a href="khachsan?action=list" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i> Quay lại danh sách khách sạn</a></p>
+        <div class="text-center mt-5">
+            <a href="khachsan?action=list" class="btn btn-outline-secondary">
+                Quay lại danh sách khách sạn
+            </a>
+        </div>
     </div>
 
-    <!-- Bootstrap 5 JS and Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Search functionality
         document.getElementById('searchInput').addEventListener('input', function(e) {
             const searchText = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('#roomTable tbody tr');
             rows.forEach(row => {
-                const tenPhong = row.cells[1].textContent.toLowerCase();
-                const loai = row.cells[2].textContent.toLowerCase();
-                const gia = row.cells[3].textContent.toLowerCase();
-                row.style.display = (tenPhong.includes(searchText) || loai.includes(searchText) || gia.includes(searchText)) ? '' : 'none';
-            });
-        });
-
-        // Pagination (client-side placeholder)
-        document.querySelectorAll('.page-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                // Add server-side pagination logic here
-                alert('Chức năng phân trang chưa được triển khai. Vui lòng thêm logic phía server.');
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchText) ? '' : 'none';
             });
         });
     </script>
